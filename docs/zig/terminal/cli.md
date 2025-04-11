@@ -629,4 +629,3 @@ Happy coding!
 *This tutorial was inspired by the [SuperZIG/io](https://github.com/Super-ZIG/io) library, which provides robust terminal utilities for Zig applications.*
 
 For the full code without following the steps, visit the [GitHub repository](https://github.com/for-zig/cli).
-```
