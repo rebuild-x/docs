@@ -206,8 +206,8 @@ pub fn startWithArgs(commands: []const command, options: []const option, args: a
     }
 
     // Execute the command's associated function with the detected options
-    if (!cmd.func(used_options)) { 
-        return Error.CommandExecutionFailed; 
+    if (!cmd.func(used_options)) {
+        return Error.CommandExecutionFailed;
     } else {
         // Execute option functions
         for (used_options) |opt| {
@@ -238,11 +238,11 @@ const cli = @import("cli.zig");
 pub const methods = struct {
     pub const commands = struct {
         // Handler for the "hello" command
-        pub fn helloFn(options: []const cli.option) bool {
+        pub fn helloFn(_options: []const cli.option) bool {
             std.debug.print("Hello, ", .{});
-            
+
             // Look for a "name" option
-            for (options) |opt| {
+            for (_options) |opt| {
                 if (std.mem.eql(u8, opt.name, "name")) {
                     if (opt.value.len > 0) {
                         std.debug.print("{s}", .{opt.value});
@@ -252,29 +252,27 @@ pub const methods = struct {
                     break;
                 }
             }
-            
+
             std.debug.print("!\n", .{});
             return true;
         }
-        
+
         // Handler for the "help" command
         pub fn helpFn(_: []const cli.option) bool {
             std.debug.print(
-                \\Usage: my-cli <command> [options]
-                \\
-                \\Commands:
-                \\  hello    Greet someone
-                \\  help     Show this help message
-                \\
-                \\Options for hello:
-                \\  -n, --name <value>    Name to greet
-                \\
+                "Usage: my-cli <command> [options]\n" ++
+                "Commands:\n" ++
+                "  hello    Greet someone\n" ++
+                "  help     Show this help message\n" ++
+                "" ++
+                "Options for hello:\n" ++
+                "  -n, --name <value>    Name to greet\n"
                 , .{}
             );
             return true;
         }
     };
-    
+
     pub const options = struct {
         // Handler for the "name" option
         pub fn nameFn(_: []const u8) bool {
@@ -307,7 +305,7 @@ pub fn main() !void {
             .func = &cmd.methods.commands.helpFn,
         },
     };
-    
+
     // Define available options
     const options = [_]cli.option{
         cli.option{
@@ -317,7 +315,7 @@ pub fn main() !void {
             .func = &cmd.methods.options.nameFn,
         },
     };
-    
+
     // Start the CLI application
     try cli.start(&commands, &options, true);
 }
@@ -325,31 +323,55 @@ pub fn main() !void {
 
 ## Step 5: Build Configuration
 
-Create a simple `build.zig` file:
+- ### Create a `build.zig` file:
 
-```zig
-const std = @import("std");
+    ```zig
+    const Build = @import("std").Build;
 
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
+    pub fn build(b: *Build) void {
+        const exe_mod           = b.createModule(.{
+            .root_source_file   = b.path("src/main.zig"),
+            .target             = b.standardTargetOptions(.{}),
+            .optimize           = b.standardOptimizeOption(.{}),
+        });
 
-    const exe = b.addExecutable(.{
-        .name = "my-cli",
-        .root_source_file = .{ .path = "src/main.zig" },
-        .target = target,
-        .optimize = optimize,
-    });
+        const exe               = b.addExecutable(.{
+            .name               = "cli",
+            .root_module        = exe_mod,
+        });
 
-    b.installArtifact(exe);
+        b.installArtifact(exe);
 
-    const run_cmd = b.addRunArtifact(exe);
-    run_cmd.step.dependOn(b.getInstallStep());
+        const exe_tests         = b.addTest(.{
+            .root_module        = exe_mod,
+        });
 
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-}
-```
+        const run_exe_tests     = b.addRunArtifact(exe_tests);
+
+        const test_step         = b.step("test", "Run unit tests");
+        test_step.dependOn(&run_exe_tests.step);
+    }
+    ```
+
+- ### Create a `build.zig.zon` file:
+
+    ```zig
+    .{
+        .name = .cli,
+
+        .version = "0.0.0",
+
+        .minimum_zig_version = "0.15.0-dev.64+2a4e06bcb",
+
+        .fingerprint = 0xd5b3a843fb43c32a,
+
+        .paths = .{
+            "build.zig", "build.zig.zon", "src",
+        },
+
+        // No dependencies.
+    }
+    ```
 
 ## Step 6: Testing Your CLI
 
@@ -419,7 +441,7 @@ Update the hello command handler in `commands.zig`:
 pub fn helloFn(options: []const cli.option) bool {
     var greeting: []const u8 = undefined;
     var name: []const u8 = "World";
-    
+
     // Extract options
     for (options) |opt| {
         if (std.mem.eql(u8, opt.name, "greeting")) {
@@ -430,7 +452,7 @@ pub fn helloFn(options: []const cli.option) bool {
             }
         }
     }
-    
+
     std.debug.print("{s}, {s}!\n", .{greeting, name});
     return true;
 }
@@ -484,7 +506,7 @@ pub const Color = enum {
     Magenta,
     Cyan,
     White,
-    
+
     pub fn ansiCode(self: Color) []const u8 {
         return switch (self) {
             .Reset => "\x1b[0m",
@@ -512,9 +534,9 @@ Use in your commands:
 pub fn helloFn(options: []const cli.option) bool {
     var greeting: []const u8 = undefined;
     var name: []const u8 = "World";
-    
+
     // Extract options (as before)
-    
+
     cli.printColored(.Green, "{s}, ", .{greeting});
     cli.printColored(.Cyan, "{s}", .{name});
     cli.printColored(.Yellow, "!\n", .{});
@@ -533,7 +555,7 @@ pub const Spinner = struct {
     current: usize = 0,
     message: []const u8,
     timer: std.time.Timer,
-    
+
     pub fn init(message: []const u8) !Spinner {
         return Spinner{
             .frames = &[_][]const u8{ "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
@@ -542,13 +564,13 @@ pub const Spinner = struct {
             .current = 0,
         };
     }
-    
+
     pub fn tick(self: *Spinner) void {
         const stdout = std.io.getStdOut().writer();
         _ = stdout.print("\r{s} {s}", .{self.frames[self.current], self.message}) catch {};
         self.current = (self.current + 1) % self.frames.len;
     }
-    
+
     pub fn stop(self: *Spinner, message: []const u8) void {
         const stdout = std.io.getStdOut().writer();
         _ = stdout.print("\r✓ {s}\n", .{message}) catch {};
@@ -561,14 +583,14 @@ pub fn longRunningCommandFn(_: []const cli.option) bool {
         std.debug.print("Failed to initialize spinner: {}\n", .{err});
         return false;
     };
-    
+
     // Simulate work
     var i: usize = 0;
     while (i < 50) : (i += 1) {
         spinner.tick();
         std.time.sleep(100 * std.time.ns_per_ms);
     }
-    
+
     spinner.stop("Done processing!");
     return true;
 }
@@ -605,3 +627,6 @@ Happy coding!
 ---
 
 *This tutorial was inspired by the [SuperZIG/io](https://github.com/Super-ZIG/io) library, which provides robust terminal utilities for Zig applications.*
+
+For the full code without following the steps, visit the [GitHub repository](https://github.com/for-zig/cli).
+```

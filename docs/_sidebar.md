@@ -1,2 +1,2 @@
 - ZIG
-  - [Build your own CLI app from scratch](./zig/cli.md)
+  - [Build your own CLI app from scratch](./zig/terminal/cli.md)

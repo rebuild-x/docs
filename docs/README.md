@@ -21,6 +21,6 @@
 
 - #### Terminal
 
-  - ##### [How to Build Your Own CLI App in Zig from Scratch](./zig/cli.md)
+  - ##### [How to Build Your Own CLI App in Zig from Scratch](./zig/terminal/cli.md)
 
 <!--------------------------------------------------------------------------->
