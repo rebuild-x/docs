@@ -11,7 +11,28 @@
     <br>
 </div>
 
+<!--------------------------------------------------------------------------->
+
+
+
+<!----------------------------------- API ----------------------------------->
+
+### Zig
+
+- #### Terminal
+
+  - ##### [How to Build Your Own CLI App in Zig from Scratch](https://rebuild-x.github.io/docs/#/./zig/cli)
+
+<!--------------------------------------------------------------------------->
+
+
+
 <!----------------------------------- END ----------------------------------->
+
+<br>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/maysara-elshewehy/SuperZIG-assets/refs/heads/main/dist/img/md/line.png" alt="line" style="display: block; margin-top:20px;margin-bottom:20px;width:500px;"/>
+</div>
 
 <br>
 <div align="center">
