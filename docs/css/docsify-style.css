@@ -826,7 +826,7 @@ body {
 .markdown-section code {
 	border-radius: 2px;
     color: var(--highlightColor);
-    font-size: .9rem;
+    font-size: inherit;
     margin: 0 2px;
     padding: 3px 5px;
     white-space: pre-wrap;
