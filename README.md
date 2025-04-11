@@ -11,23 +11,6 @@
     <br>
 </div>
 
-<!--------------------------------------------------------------------------->
-
-
-
-<!----------------------------------- API ----------------------------------->
-
-> _**See: [`rebuild-x.github.io`](https://rebuild-x.github.io/rebuild-x/)**_
-
-<br>
-<div align="center">
-    <img src="https://raw.githubusercontent.com/maysara-elshewehy/SuperZIG-assets/refs/heads/main/dist/img/md/line.png" alt="line" style="display: block; margin-top:20px;margin-bottom:20px;width:500px;"/>
-</div>
-
-<!--------------------------------------------------------------------------->
-
-
-
 <!----------------------------------- END ----------------------------------->
 
 <br>
