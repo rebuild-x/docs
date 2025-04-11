@@ -1,7 +1,7 @@
 <!----------------------------------- BEG ----------------------------------->
 <br>
 <div align="center">
-    <img src="https://raw.githubusercontent.com/rebuild-x/rebuild-x/refs/heads/main/dist/logo.png" style="width: 200px"/>
+    <img src="https://raw.githubusercontent.com/rebuild-x/rebuild-x/refs/heads/main/dist/logo.png" style="width: 80px"/>
 </div>
 
 <br>
