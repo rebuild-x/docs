@@ -1,0 +1,147 @@
+.page-interactions {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid var(--borderColor);
+}
+
+.like-section {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+#like-icon {
+  opacity: 0.5;
+  transition: opacity 0.3s, transform 0.3s;
+  margin-right: 5px;
+}
+
+#like-button.liked #like-icon {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.user-comment-section {
+  margin-top: 30px;
+}
+
+/* Add styles for user picture and name in comments */
+.user-comment {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid var(--borderColor);
+  border-radius: 5px;
+  background-color: var(--codeBackgroundColor);
+  flex-direction: column;
+  gap: 15px;
+}
+
+.user-comment-meta {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+}
+
+.user-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+  border: 1px solid var(--background)
+}
+
+.user-comment-author {
+  font-weight: bold;
+  margin-right: 5px;
+  width: 100%;
+  display: f;
+}
+
+.user-comment-date {
+  font-size: 0.65em;
+  color: #888;
+  width: max-content !important;
+  text-wrap-mode: nowrap;
+}
+
+.user-comment-content {
+  flex: 1;
+  font-size: 1em;
+  color: #333;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: var(--textColor);
+}
+
+.user-comment-form {
+  margin-top: 20px;
+}
+
+#user-comment-text {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  background-color: var(--background);
+  color: var(--textColor);
+  resize: vertical;
+}
+
+#user-comment-submit {
+  display: block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#user-comment-submit:hover {
+  opacity: 0.9;
+}
+
+#auth-container {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+#github-login,
+#github-logout {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+#like-button:disabled {
+  opacity: 0.5;  /* Make it visually clear it's disabled */
+  cursor: not-allowed;
+}

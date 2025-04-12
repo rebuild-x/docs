@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>rebuild-x Documentation</title>
+  <link rel="icon" href="./images/favicon.ico">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="keywords" content="doc,docs,documentation,maysara,elshewehy,code,guild,github,github-pages,zig">
+  <meta name="description" content="This is where I document everything I build . . !">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- External Stylesheets -->
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css">
+  <link rel="stylesheet" href="./css/likes-comments.css">
+  <link rel="stylesheet" href="./css/style.css">
+
+  <!-- Inline Critical Styles -->
+  <style>
+    nav.app-nav li ul {
+      min-width: 100px;
+    }
+
+    :root {
+      --accent: #42b983;
+      --background: #091a28;
+      --textColor: #b4b4b4;
+      --codeTextColor: #ffffff;
+      --codeBackgroundColor: #0e2233;
+      --borderColor: #0d2538;
+      --blockQuoteColour: #858585;
+      --highlightColor: #d22778;
+      --sidebarSublink: #b4b4b4;
+      --codeTypeColor: #ffffff;
+      --coverBackground: linear-gradient(to left bottom, hsl(118, 100%, 85%) 0%, hsl(181, 100%, 85%) 100%);
+      --siteFont: "PT Sans";
+      --codeFontFamily: "Roboto Mono, Monaco, courier, monospace";
+      --bodyFontSize: "17px";
+      color-scheme: dark;
+    }
+
+    #docsify-darklight-theme {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">We are building something special for you ...</div>
+
+  <!-- Docsify Configuration -->
+  <script>
+    window.$docsify = {
+      search: 'auto',
+      repo: 'https://github.com/rebuild-x/rebuild-x',
+      plugins: [
+        function(hook) {
+          var footer = [
+            '<footer style="text-align: center; margin-top: 0px;">',
+            '<div align="center">',
+            '<img src="https://raw.githubusercontent.com/maysara-elshewehy/SuperZIG-assets/refs/heads/main/dist/img/md/line.png" alt="decorative line" style="display: block; margin-top:0px; margin-bottom:20px; width:500px;"/>',
+            '</div>',
+            '<br>',
+            '<div align="center">',
+            '<a href="https://github.com/maysara-elshewehy">',
+            '<img src="https://img.shields.io/badge/Made with ❤️ by-Maysara-orange" alt="Made with love by Maysara"/>',
+            '</a>',
+            '</div>',
+            '</footer>'
+          ].join('');
+
+          hook.afterEach(function(html) {
+            return html + footer;
+          });
+        }
+      ],
+      auto2top: true,
+      executeScript: true,
+      loadSidebar: true,
+      loadNavbar: true,
+      maxLevel: 4,
+      subMaxLevel: 3,
+      name: 'rebuild-x Documentation',
+      search: {
+        noData: {
+          '/': 'No results!'
+        },
+        paths: 'auto',
+        placeholder: {
+          '/': 'Search'
+        }
+      },
+      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+    };
+  </script>
+
+  <!-- External Scripts -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-markdown.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-zig.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      updateUI(user);
+    });
+
+    function updateUI(user) {
+      const likeButton = document.getElementById('like-button');
+      const commentSection = document.querySelector('.user-comment-section');
+      const commentSubmit = document.getElementById('user-comment-submit');
+      const commentText = document.getElementById('user-comment-text');
+
+      if (!likeButton || !commentSection || !commentSubmit || !commentText) {
+        setTimeout(() => updateUI(user), 100);
+        return;
+      }
+
+      if (user) {
+        likeButton.disabled = false;
+        commentSection.style.display = 'block';
+        commentSubmit.textContent = "Submit";
+        commentText.placeholder = "Write your comment here...";
+
+        const path = window.location.hash.slice(2) || '/';
+        const pageId = path.replace(/\//g, '_').replace(/\./g, '_');
+        const userCommentRef = ref(db, `comments_per_user_per_post/${pageId}/${user.uid}`);
+
+        get(userCommentRef).then((snapshot) => {
+          if (snapshot.exists()) {
+            commentSubmit.disabled = true;
+          }
+        }).catch((error) => {
+          console.error("Error checking comment status:", error);
+        });
+      } else {
+        likeButton.disabled = false;
+        commentSection.style.display = 'block';
+        commentSubmit.textContent = "Sign in to Comment";
+        commentText.placeholder = "Sign in to add a comment...";
+      }
+    }
+
+    function promptAuthentication() {
+      if (!currentUser) {
+        const provider = new GithubAuthProvider();
+        signInWithPopup(auth, provider).catch((error) => {
+          console.error("Authentication failed:", error);
+        });
+      }
+    }
+
+    (function() {
+      const plugin = (hook, vm) => {
+        hook.beforeEach(function(content) {
+          return content;
+        });
+
+        hook.afterEach(function(html, next) {
+          const path = vm.route.path;
+          const pageId = path.replace(/\//g, '_').replace(/\./g, '_');
+
+          const likeCommentSection = `
+            <div class="page-interactions">
+              <div class="like-section">
+                <button id="like-button" aria-label="Like this page">
+                  <span id="like-icon">❤️</span>
+                  <span id="like-count">0</span>
+                </button>
+              </div>
+              <div class="user-comment-section">
+                <h3>Comments</h3>
+                <div id="user-comments-container"></div>
+                <div class="user-comment-form">
+                  <textarea id="user-comment-text" placeholder="Sign in to add a comment..."></textarea>
+                  <button id="user-comment-submit">Sign in to Comment</button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          next(html + likeCommentSection);
+
+          setTimeout(() => {
+            const likeButton = document.getElementById('like-button');
+            const commentSubmit = document.getElementById('user-comment-submit');
+            const commentText = document.getElementById('user-comment-text');
+
+            if (!likeButton || !commentSubmit || !commentText) {
+              console.warn("One or more UI elements are missing. Ensuring the DOM is fully loaded.");
+              return;
+            }
+
+            likeButton.addEventListener('click', () => {
+              if (promptAuthentication()) return;
+
+              const userLikeRef = ref(db, `likes/${pageId}/${currentUser.uid}`);
+              get(userLikeRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                  set(userLikeRef, null)
+                    .then(() => {
+                      console.log("Like removed successfully.");
+                    })
+                    .catch((error) => {
+                      console.error("Error removing like:", error);
+                    });
+                } else {
+                  set(userLikeRef, true)
+                    .then(() => {
+                      console.log("Like added successfully.");
+                    })
+                    .catch((error) => {
+                      console.error("Error adding like:", error);
+                    });
+                }
+              }).catch((error) => {
+                console.error("Error checking like status:", error);
+              });
+            });
+
+            // Ensure the comment submission logic properly handles the case when a user has already commented twice
+            commentSubmit.addEventListener('click', () => {
+              if (promptAuthentication()) return;
+
+              if (!commentText.value.trim()) {
+                alert("Comment cannot be empty.");
+                return;
+              }
+
+              const userCommentRef = ref(db, `comments_per_user_per_post/${pageId}/${currentUser.uid}`);
+              get(userCommentRef).then((snapshot) => {
+                const userComments = snapshot.val() || {};
+                const commentCount = Object.keys(userComments).length;
+
+                if (commentCount >= 2) {
+                  alert("You can comment twice per post.");
+                  commentText.value = ""; // Clear the input field
+                  return;
+                }
+
+                const newCommentRef = push(ref(db, `comments/${pageId}`));
+                set(newCommentRef, {
+                  uid: currentUser.uid,
+                  name: currentUser.displayName || 'Anonymous',
+                  photoURL: currentUser.photoURL || './images/default-avatar.png',
+                  text: commentText.value.trim(),
+                  timestamp: serverTimestamp()
+                }).then(() => {
+                  const commentKey = newCommentRef.key;
+                  set(ref(db, `comments_per_user_per_post/${pageId}/${currentUser.uid}/${commentKey}`), true)
+                    .then(() => {
+                      console.log("Comment posted successfully!");
+                      commentText.value = "";
+                      commentText.placeholder = commentCount === 1 ? "You have already commented twice on this page." : "You can comment once more on this page.";
+                    })
+                    .catch((error) => {
+                      console.error("Error marking comment existence:", error);
+                    });
+                }).catch((error) => {
+                  console.error("Error posting comment:", error);
+                });
+              }).catch((error) => {
+                console.error("Error checking comment existence:", error);
+              });
+            });
+          }, 100);
+        });
+
+        hook.doneEach(function() {
+          const path = vm.route.path;
+          const pageId = path.replace(/\//g, '_').replace(/\./g, '_');
+
+          if (currentUser) {
+            updateUI(currentUser);
+          }
+
+          const likesRef = ref(db, `likes/${pageId}`);
+          const likeButton = document.getElementById('like-button');
+          const likeCount = document.getElementById('like-count');
+
+          if (!likeButton || !likeCount) {
+            console.warn("Like button elements not found. Ensuring the DOM is fully loaded.");
+            return;
+          }
+
+          onValue(likesRef, (snapshot) => {
+            const likes = snapshot.val() || {};
+            const count = Object.keys(likes).length;
+            likeCount.textContent = count;
+
+            if (currentUser && likes[currentUser.uid]) {
+              likeButton.classList.add('liked');
+            } else {
+              likeButton.classList.remove('liked');
+            }
+          });
+
+          const commentsRef = ref(db, `comments/${pageId}`);
+          const commentsContainer = document.getElementById('user-comments-container');
+
+          if (!commentsContainer) {
+            console.warn("Comments container not found. Ensuring the DOM is fully loaded.");
+            return;
+          }
+
+          onValue(commentsRef, (snapshot) => {
+            const comments = snapshot.val() || {};
+            commentsContainer.innerHTML = '';
+
+            Object.entries(comments).forEach(([commentId, comment]) => {
+              const commentEl = document.createElement('div');
+              commentEl.className = 'user-comment';
+
+              let dateStr = 'Just now';
+              if (comment.timestamp) {
+                try {
+                  dateStr = new Date(comment.timestamp).toLocaleString();
+                } catch (e) {
+                  console.warn("Error parsing timestamp:", e);
+                }
+              }
+
+              commentEl.innerHTML = `
+                <div class="user-comment-meta">
+                  <img class="user-comment-avatar" src="${comment.photoURL || './images/default-avatar.png'}" alt="User avatar">
+                  <span class="user-comment-author">${comment.name || 'Anonymous'}</span>
+                  <span class="user-comment-date">${dateStr}</span>
+                </div>
+                <div class="user-comment-content">${comment.text}</div>
+              `;
+              commentsContainer.appendChild(commentEl);
+            });
+
+            if (Object.keys(comments).length === 0) {
+              commentsContainer.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+            }
+          });
+        });
+      };
+
+      window.$docsify.plugins = [].concat(plugin, window.$docsify.plugins);
+    })();
+  </script>
+</body>
+
+</html>
