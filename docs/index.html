@@ -45,7 +45,10 @@
     <!-- Docsify Configuration -->
     <script>
       window.$docsify = {
-        search: 'auto',
+        search: 'auto', // default
+        search : [
+          '/',
+        ],
         repo: 'https://github.com/rebuild-x/rebuild-x',
         plugins: [
           function(hook) {
@@ -76,7 +79,13 @@
         subMaxLevel: 3,
         name: '',
         search: {
-          
+          noData: {
+            '/': 'No results!'
+          },
+          paths: 'auto',
+          placeholder: {
+            '/': 'Search'
+          }
         },
         formatUpdated: '{MM}/{DD} {HH}:{mm}',
       };
